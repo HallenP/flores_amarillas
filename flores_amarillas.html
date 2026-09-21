@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flores amarillas para ti 🌻</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #fff8c8 0%, #fffdf1 55%, #dff2c8 100%);
+      color: #5f4a00;
+    }
+
+    .scene {
+      width: min(100%, 720px);
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 18px 30px;
+      text-align: center;
+    }
+
+    .sun {
+      font-size: 64px;
+      animation: float 3s ease-in-out infinite;
+      filter: drop-shadow(0 8px 12px rgba(255, 196, 0, .25));
+    }
+
+    h1 {
+      margin: 8px 0 10px;
+      font-size: clamp(2rem, 8vw, 3.6rem);
+      line-height: 1;
+      font-family: Georgia, 'Times New Roman', serif;
+      color: #8a6500;
+    }
+
+    .subtitle {
+      max-width: 500px;
+      margin: 0 auto 24px;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #665b35;
+    }
+
+    .garden {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      margin-top: 6px;
+    }
+
+    .flower {
+      --scale: 1;
+      position: absolute;
+      bottom: 0;
+      transform-origin: bottom center;
+      transform: scale(var(--scale));
+      animation: sway 3.2s ease-in-out infinite;
+    }
+
+    .stem {
+      width: 7px;
+      height: 180px;
+      background: linear-gradient(#609b40, #3e7d2b);
+      border-radius: 6px;
+      margin: 0 auto;
+      box-shadow: inset 1px 0 rgba(255,255,255,.25);
+    }
+
+    .head {
+      position: absolute;
+      left: 50%;
+      top: -35px;
+      width: 70px;
+      height: 70px;
+      transform: translateX(-50%);
+    }
+
+    .petal {
+      position: absolute;
+      width: 29px;
+      height: 46px;
+      left: 21px;
+      top: 11px;
+      border-radius: 55% 55% 45% 45%;
+      background: linear-gradient(#ffe659, #f4c620);
+      transform-origin: 50% 82%;
+      box-shadow: 0 3px 6px rgba(196, 146, 0, .2);
+    }
+
+    .p1 { transform: rotate(0deg) translateY(-20px); }
+    .p2 { transform: rotate(45deg) translateY(-20px); }
+    .p3 { transform: rotate(90deg) translateY(-20px); }
+    .p4 { transform: rotate(135deg) translateY(-20px); }
+    .p5 { transform: rotate(180deg) translateY(-20px); }
+    .p6 { transform: rotate(225deg) translateY(-20px); }
+    .p7 { transform: rotate(270deg) translateY(-20px); }
+    .p8 { transform: rotate(315deg) translateY(-20px); }
+
+    .center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #b67d28, #6a4312);
+      transform: translate(-50%, -50%);
+      z-index: 3;
+    }
+
+    .leaf {
+      position: absolute;
+      top: 92px;
+      left: 50%;
+      width: 52px;
+      height: 24px;
+      background: #5f9944;
+      border-radius: 100% 0 100% 0;
+      transform: rotate(22deg);
+    }
+
+    .leaf.right {
+      top: 122px;
+      left: calc(50% - 48px);
+      transform: scaleX(-1) rotate(22deg);
+    }
+
+    .f1 { left: 5%;  --scale: .72; animation-delay: .1s; }
+    .f2 { left: 22%; --scale: .9;  animation-delay: .7s; }
+    .f3 { left: 43%; --scale: 1.12; animation-delay: .3s; }
+    .f4 { left: 68%; --scale: .88; animation-delay: 1s; }
+    .f5 { left: 86%; --scale: .68; animation-delay: .5s; }
+
+    .button {
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 22px;
+      background: #f2c928;
+      color: #4a3900;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(180, 135, 0, .18);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .button:hover { transform: translateY(-2px); }
+    .button:active { transform: scale(.98); }
+
+    .secret {
+      max-width: 520px;
+      margin: 18px auto 0;
+      padding: 0 10px;
+      font-size: 1.05rem;
+      line-height: 1.55;
+      color: #725600;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: .7s ease;
+      pointer-events: none;
+    }
+
+    .secret.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .falling {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .falling span {
+      position: absolute;
+      top: -60px;
+      font-size: 22px;
+      opacity: .75;
+      animation: fall linear infinite;
+    }
+
+    .falling span:nth-child(1) { left: 7%;  animation-duration: 7s; animation-delay: .3s; }
+    .falling span:nth-child(2) { left: 22%; animation-duration: 9s; animation-delay: 1s; }
+    .falling span:nth-child(3) { left: 39%; animation-duration: 8s; animation-delay: 2.2s; }
+    .falling span:nth-child(4) { left: 58%; animation-duration: 10s; animation-delay: .7s; }
+    .falling span:nth-child(5) { left: 76%; animation-duration: 7.5s; animation-delay: 1.7s; }
+    .falling span:nth-child(6) { left: 91%; animation-duration: 9.5s; animation-delay: .1s; }
+
+    @keyframes sway {
+      0%, 100% { rotate: -2deg; }
+      50% { rotate: 3deg; }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes fall {
+      from { transform: translateY(-40px) rotate(0deg); }
+      to { transform: translateY(115vh) rotate(360deg); }
+    }
+
+    @media (max-width: 520px) {
+      .garden { height: 255px; }
+      .stem { height: 150px; }
+      .f1 { left: 0%; }
+      .f5 { left: 84%; }
+      .scene { justify-content: flex-start; padding-top: 42px; }
+      .subtitle { margin-bottom: 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="scene">
+    <div class="falling" aria-hidden="true">
+      <span>🌼</span><span>🌻</span><span>🌼</span>
+      <span>🌻</span><span>🌼</span><span>🌻</span>
+    </div>
+
+    <div class="sun">☀️</div>
+
+    <h1>Flores amarillas para ti 🌻</h1>
+
+    <p class="subtitle">
+      Porque hoy quería regalarte algo pequeño, bonito y diferente.
+      Espero que estas flores te saquen una sonrisa. 💛
+    </p>
+
+    <section class="garden" aria-label="Ramo animado de flores amarillas">
+      <div class="flower f1">
+        <div class="head">
+          <span class="petal p1"></span><span class="petal p2"></span>
+          <span class="petal p3"></span><span class="petal p4"></span>
+          <span class="petal p5"></span><span class="petal p6"></span>
+          <span class="petal p7"></span><span class="petal p8"></span>
+          <span class="center"></span>
+        </div>
+        <div class="stem"></div>
+      </div>
+
+      <div class="flower f2">
+        <div class="head">
+          <span class="petal p1"></span><span class="petal p2"></span>
+          <span class="petal p3"></span><span class="petal p4"></span>
+          <span class="petal p5"></span><span class="petal p6"></span>
+          <span class="petal p7"></span><span class="petal p8"></span>
+          <span class="center"></span>
+        </div>
+        <div class="stem"></div>
+        <span class="leaf"></span>
+      </div>
+
+      <div class="flower f3">
+        <div class="head">
+          <span class="petal p1"></span><span class="petal p2"></span>
+          <span class="petal p3"></span><span class="petal p4"></span>
+          <span class="petal p5"></span><span class="petal p6"></span>
+          <span class="petal p7"></span><span class="petal p8"></span>
+          <span class="center"></span>
+        </div>
+        <div class="stem"></div>
+        <span class="leaf"></span>
+        <span class="leaf right"></span>
+      </div>
+
+      <div class="flower f4">
+        <div class="head">
+          <span class="petal p1"></span><span class="petal p2"></span>
+          <span class="petal p3"></span><span class="petal p4"></span>
+          <span class="petal p5"></span><span class="petal p6"></span>
+          <span class="petal p7"></span><span class="petal p8"></span>
+          <span class="center"></span>
+        </div>
+        <div class="stem"></div>
+        <span class="leaf right"></span>
+      </div>
+
+      <div class="flower f5">
+        <div class="head">
+          <span class="petal p1"></span><span class="petal p2"></span>
+          <span class="petal p3"></span><span class="petal p4"></span>
+          <span class="petal p5"></span><span class="petal p6"></span>
+          <span class="petal p7"></span><span class="petal p8"></span>
+          <span class="center"></span>
+        </div>
+        <div class="stem"></div>
+      </div>
+    </section>
+
+    <button class="button" id="revealButton" type="button">
+      Toca aquí 💛
+    </button>
+
+    <div class="secret" id="secretMessage" aria-live="polite">
+      Quizá no sean flores de verdad, pero sí llevan una intención real:
+      hacerte sonreír aunque sea un poquito. 🌻✨
+    </div>
+  </main>
+
+  <script>
+    const button = document.getElementById('revealButton');
+    const message = document.getElementById('secretMessage');
+
+    button.addEventListener('click', () => {
+      message.classList.add('show');
+      button.textContent = 'Para una persona especial 🌻';
+    });
+  </script>
+</body>
+</html>
